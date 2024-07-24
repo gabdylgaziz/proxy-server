@@ -1,0 +1,105 @@
+definitions:
+  proxy.Request:
+    properties:
+      headers:
+        additionalProperties:
+          type: string
+        type: object
+      method:
+        type: string
+      url:
+        type: string
+    type: object
+  proxy.Response:
+    properties:
+      headers:
+        additionalProperties:
+          items:
+            type: string
+          type: array
+        type: object
+      id:
+        type: string
+      length:
+        type: integer
+      status:
+        type: integer
+    type: object
+info:
+  contact: {}
+paths:
+  /health:
+    get:
+      consumes:
+      - application/json
+      description: Healthcheking.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Health check
+      tags:
+      - health
+  /requests:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        This endpoint creates a new request based on the provided payload.
+        The request method, URL, and headers must be specified in the request body.
+      parameters:
+      - description: Request payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/proxy.Request'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/proxy.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Create request
+      tags:
+      - requests
+  /requests/{id}:
+    get:
+      consumes:
+      - application/json
+      description: |-
+        This endpoint retrieves a request by its ID.
+        The ID must be provided as a path parameter.
+      parameters:
+      - description: Request ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/proxy.Response'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: get request by id
+      tags:
+      - requests
+swagger: "2.0"
